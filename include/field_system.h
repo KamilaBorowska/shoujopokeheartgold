@@ -212,4 +212,6 @@ static inline void InitLocation(Location *location, int mapId, int warpId, int x
     location->direction = direction;
 }
 
+u32 get_current_location();
+
 #endif //POKEHEARTGOLD_FIELD_SYSTEM_H

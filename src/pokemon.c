@@ -20,6 +20,7 @@
 #include "constants/abilities.h"
 #include "constants/map_sections.h"
 #include "sound_02004A44.h"
+#include "modify_pokemon.h"
 
 void MonEncryptSegment(void *data, u32 size, u32 key);
 void MonDecryptSegment(void *data, u32 size, u32 key);
@@ -162,6 +163,7 @@ BOOL ReleaseBoxMonLock(BOXMON *boxmon, BOOL locked) {
     }
     return prev;
 }
+
 void CreateMon(POKEMON * pokemon, int species, int level, int fixedIV, int hasFixedPersonality, int fixedPersonality, int otIdType, int fixedOtId) {
     MAIL * mail;
     u32 capsule;
@@ -188,16 +190,19 @@ void CreateBoxMon(BOXMON * boxPokemon, int species, int level, int fixedIV, int 
     u32 iv;
     ZeroBoxMonData(boxPokemon);
     decry = AcquireBoxMonLock(boxPokemon);
-    if (hasFixedPersonality == 0) {
-        fixedPersonality = (LCRandom() | (LCRandom() << 16));
-    }
-    SetBoxMonData(boxPokemon, MON_DATA_PERSONALITY, &fixedPersonality);
-    if (otIdType == 2) {
-        do {
-            fixedOtId = (LCRandom() | (LCRandom() << 16));
-        } while (SHINY_CHECK(fixedOtId, fixedPersonality));
-    } else if (otIdType != 1) {
-        fixedOtId = 0;
+    BOOL modified = modify_pokemon(boxPokemon, species);
+    if (!modified) {
+        if (hasFixedPersonality == 0) {
+            fixedPersonality = (LCRandom() | (LCRandom() << 16));
+        }
+        SetBoxMonData(boxPokemon, MON_DATA_PERSONALITY, &fixedPersonality);
+        if (otIdType == 2) {
+            do {
+                fixedOtId = (LCRandom() | (LCRandom() << 16));
+            } while (SHINY_CHECK(fixedOtId, fixedPersonality));
+        } else if (otIdType != 1) {
+            fixedOtId = 0;
+        }
     }
     SetBoxMonData(boxPokemon, MON_DATA_OTID, &fixedOtId);
     SetBoxMonData(boxPokemon, MON_DATA_GAME_LANGUAGE, (void *)&gGameLanguage);
@@ -235,20 +240,24 @@ void CreateBoxMon(BOXMON * boxPokemon, int species, int level, int fixedIV, int 
         iv = (exp & 0x7C00) >> 10;
         SetBoxMonData(boxPokemon, MON_DATA_SPDEF_IV, &iv);
     }
-    exp = (u32)GetMonBaseStat(species, BASE_ABILITY_1);
-    iv = (u32)GetMonBaseStat(species, BASE_ABILITY_2);
-    if (iv != 0) {
-        if (fixedPersonality & 1) {
-            SetBoxMonData(boxPokemon, MON_DATA_ABILITY, &iv);
+    if (!modified) {
+        exp = (u32)GetMonBaseStat(species, BASE_ABILITY_1);
+        iv = (u32)GetMonBaseStat(species, BASE_ABILITY_2);
+        if (iv != 0) {
+            if (fixedPersonality & 1) {
+                SetBoxMonData(boxPokemon, MON_DATA_ABILITY, &iv);
+            } else {
+                SetBoxMonData(boxPokemon, MON_DATA_ABILITY, &exp);
+            }
         } else {
             SetBoxMonData(boxPokemon, MON_DATA_ABILITY, &exp);
         }
-    } else {
-        SetBoxMonData(boxPokemon, MON_DATA_ABILITY, &exp);
     }
     exp = GetBoxMonGender(boxPokemon);
     SetBoxMonData(boxPokemon, MON_DATA_GENDER, &exp);
-    InitBoxMonMoveset(boxPokemon);
+    if (!modified) {
+        InitBoxMonMoveset(boxPokemon);
+    }
     ReleaseBoxMonLock(boxPokemon, decry);
 }
 
@@ -3740,11 +3749,16 @@ static const u16 sItemOdds[2][2] = {
 };
 
 void WildMonSetRandomHeldItem(struct Pokemon * pokemon, u32 a1, u32 a2) {
+    u16 current_item;
     u32 chance;
     u16 species;
     u16 forme;
     u16 item1;
     u16 item2;
+    GetMonData(pokemon, MON_DATA_HELD_ITEM, &current_item);
+    if (current_item) {
+        return;
+    }
     if (!(a1 & 0x81)) {
         chance = (u32)(LCRandom() % 100);
         species = (u16)GetMonData(pokemon, MON_DATA_SPECIES, 0);

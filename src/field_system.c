@@ -316,3 +316,9 @@ void sub_0203E348() {
 void sub_0203E354() {
     sFieldSysPtr->unkC4 = -2;
 }
+
+// Cheesing access to current map ID to avoid having to rewrite callers of CreateMon.
+// Very hacky, but I mean, this disassembly is incomplete.
+u32 get_current_location() {
+    return sFieldSysPtr->location->mapId;
+}
