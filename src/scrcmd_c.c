@@ -4396,10 +4396,6 @@ BOOL ScrCmd_FollowerPokeIsEventTrigger(SCRIPTCONTEXT *ctx) {
     if (GetMonData(pokemon, MON_DATA_IS_EGG, NULL) || GetMonData(pokemon, MON_DATA_CHECKSUM_FAILED, NULL)) {
         return FALSE;
     }
-    if (!sub_0208E9E0(r4, pokemon, GetMonData(pokemon, MON_DATA_OTID, NULL) == PlayerProfile_GetTrainerID(
-        Sav2_PlayerData_GetProfileAddr(ctx->fsys->savedata)))) {
-        return FALSE;
-    }
 
     species = GetMonData(pokemon, MON_DATA_SPECIES, NULL);
     switch (r4) {
