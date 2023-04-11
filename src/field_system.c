@@ -320,5 +320,10 @@ void sub_0203E354() {
 // Cheesing access to current map ID to avoid having to rewrite callers of CreateMon.
 // Very hacky, but I mean, this disassembly is incomplete.
 u32 get_current_location() {
-    return sFieldSysPtr->location->mapId;
+    // Check necessary to ensure the game doesn't crash when starting new game
+    if (sFieldSysPtr && sFieldSysPtr->location) {
+        return sFieldSysPtr->location->mapId;
+    } else {
+        return 0;
+    }
 }
