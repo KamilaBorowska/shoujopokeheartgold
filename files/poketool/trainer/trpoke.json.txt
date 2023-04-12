@@ -4,6 +4,8 @@
 #include "constants/species.h"
 #include "constants/moves.h"
 #include "constants/items.h"
+#include "constants/abilities.h"
+#include "constants/pokemon.h"
 
 	.rodata
 {% set i=0 %}
@@ -20,6 +22,10 @@ gTrainerPoke_{{ i }}:
 	.short {{ move }}{% endfor %}{% for k in range(4 - length(poke.moves)) %}
 	.short MOVE_NONE{% endfor %}{% endif %}
 	.short {{ poke.capsule }}
+	{% if existsIn(poke, "ability") %}
+		.byte {{ poke.ability }}
+		.byte {{ poke.nature }}
+	{% endif %}
 ## endfor
 {% if length(trainer.party) == 0 %}	.byte 0
 	.byte 0

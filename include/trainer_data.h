@@ -76,11 +76,24 @@ typedef struct TrainerMonSpeciesItemMoves {
     u16 capsule;
 } TRPOKE_ITEM_CUSTMOVES;
 
+typedef struct {
+    u8 difficulty;
+    u8 genderAbilityOverride;
+    u16 level;
+    u16 species;
+    u16 item;
+    u16 moves[MON_MOVES];
+    u16 capsule;
+    u8 ability;
+    u8 nature;
+} TRPOKE_SHOUJO;
+
 typedef union TrainerMon {
     TRPOKE_NOITEM_DFLTMOVES species;
     TRPOKE_NOITEM_CUSTMOVES species_moves;
     TRPOKE_ITEM_DFLTMOVES species_item;
     TRPOKE_ITEM_CUSTMOVES species_item_moves;
+    TRPOKE_SHOUJO species_shoujo;
 } TRPOKE;
 
 typedef struct TrainerData {

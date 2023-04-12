@@ -763,6 +763,7 @@
 #define TRTYPE_MON_MOVES      ((1<<TRTYPE_MOVES_F)|(0<<TRTYPE_ITEM_F))
 #define TRTYPE_MON_ITEM       ((0<<TRTYPE_MOVES_F)|(1<<TRTYPE_ITEM_F))
 #define TRTYPE_MON_ITEM_MOVES ((1<<TRTYPE_MOVES_F)|(1<<TRTYPE_ITEM_F))
+#define TRTYPE_SHOUJO 4
 
 // Before the battle starts (interact, trainer eye)
 #define TRMSG_INTRO                         0

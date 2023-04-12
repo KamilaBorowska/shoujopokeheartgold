@@ -45,7 +45,7 @@ BOOL modify_pokemon(BOXMON * boxPokemon, int species) {
             SetBoxMonData(boxPokemon, MON_DATA_HELD_ITEM, &mapping->item);
             for (int j = 0; j < 4; j++) {
                 if (mapping->moves[j]) {
-                    TryAppendBoxMonMove(boxPokemon, mapping->moves[j]);
+                    BoxMonSetMoveInSlot(boxPokemon, mapping->moves[j], j);
                 }
             }
             return TRUE;

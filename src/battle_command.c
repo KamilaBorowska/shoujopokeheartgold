@@ -2125,6 +2125,10 @@ u32 CalcPrizeMoney(BattleSystem *bsys, BATTLECONTEXT *ctx, int trainerIndex) {
         TRPOKE_ITEM_CUSTMOVES *pokeCustItem = (TRPOKE_ITEM_CUSTMOVES *)trPoke;
         level = pokeCustItem[trainer.npoke-1].level;
         break;
+    case 4:
+        TRPOKE_SHOUJO *pokeShoujo = (TRPOKE_SHOUJO *)trPoke;
+        level = pokeShoujo[trainer.npoke-1].level;
+        break;
     }
 
     i = 0;

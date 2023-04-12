@@ -425,6 +425,37 @@ void CreateNPCTrainerParty(BATTLE_SETUP *enemies, int party_id, HeapID heap_id) 
         }
         break;
     }
+    case TRTYPE_SHOUJO: {
+        TRPOKE_SHOUJO *monShoujo;
+        u16 species;
+        u8 forme;
+        monShoujo = &data->species_shoujo;
+        for (i = 0; i < enemies->trainer[party_id].npoke; i++) {
+            species = monShoujo[i].species & 0x3FF;
+            forme = (monShoujo[i].species & 0xFC00) >> 10;
+            TrMon_OverridePidGender(species, forme, monShoujo[i].genderAbilityOverride, &pid_gender);
+            personality = monShoujo[i].difficulty + monShoujo[i].level + species + enemies->trainerId[party_id];
+            SetLCRNGSeed(personality);
+            do {
+                for (j = 0; j < enemies->trainer[party_id].trainerClass; j++) {
+                    personality = LCRandom();
+                }
+                personality = (personality << 8) + pid_gender;
+            } while (personality % 25 != monShoujo[i].nature);
+            iv = (u8)((monShoujo[i].difficulty * 31) / 255);
+            CreateMon(pokemon, species, monShoujo[i].level, iv, TRUE, (s32)personality, OT_ID_RANDOM_NO_SHINY, 0);
+            SetMonData(pokemon, MON_DATA_HELD_ITEM, &monShoujo[i].item);
+            for (j = 0; j < MON_MOVES; j++) {
+                MonSetMoveInSlot(pokemon, monShoujo[i].moves[j], (u8)j);
+            }
+            SetTrMonCapsule(monShoujo[i].capsule, pokemon, heap_id);
+            SetMonData(pokemon, MON_DATA_FORME, &forme);
+            SetMonData(pokemon, MON_DATA_ABILITY, &monShoujo[i].ability);
+            TrMon_FrustrationCheckAndSetFriendship(pokemon);
+            AddMonToParty(enemies->party[party_id], pokemon);
+        }
+        break;
+    }
     }
     FreeToHeap(data);
     FreeToHeap(pokemon);

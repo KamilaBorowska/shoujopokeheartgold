@@ -22488,7 +22488,7 @@
       ]
     },
     {
-      "type": "TRTYPE_MON",
+      "type": "TRTYPE_SHOUJO",
       "class": "TRAINERCLASS_PASSERBY",
       "name": "{TRNAME}Boy",
       "items": [],
@@ -22501,7 +22501,13 @@
           "abilityOverride": "TRPOKE_ABILITY_OVERRIDE_OFF",
           "level": 5,
           "species": "SPECIES_CYNDAQUIL",
-          "capsule": 0
+          "item": "ITEM_LEFTOVERS",
+          "moves": [
+            "MOVE_TRANSFORM"
+          ],
+          "capsule": 0,
+          "ability": "ABILITY_DRIZZLE",
+          "nature": "NATURE_RELAXED"
         }
       ],
       "messages": [
