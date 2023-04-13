@@ -44,7 +44,18 @@ static void sub_020506AC(TaskManager *man, BATTLE_SETUP *setup) {
     TaskManager_Call(man, sub_02050660, setup);
 }
 
+static void init_battle(BATTLE_SETUP *setup) {
+    PARTY *party = setup->party[0];
+    u8 partyCount = GetPartyCount(party);
+    for (int i = 0; i < partyCount; i++) {
+        POKEMON *mon = GetPartyMonByIndex(party, i);
+        u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL) + 1;
+        SetMonData(mon, MON_DATA_RESERVED_114, &item);
+    }
+}
+
 static ENCOUNTER *Encounter_New(BATTLE_SETUP *setup, int effect, int bgm, int *flag) {
+    init_battle(setup);
     ENCOUNTER *work;
     work = AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(ENCOUNTER));
     work->winFlag = flag;
@@ -73,6 +84,18 @@ static BOOL sub_020506F4(ENCOUNTER *work, FieldSystem *fsys) {
 static void sub_02050724(BATTLE_SETUP *setup, FieldSystem *fsys) {
     if (!(setup->flags & (1 << 31))) {
         sub_0205239C(setup, fsys);
+    }
+    PARTY* party = SavArray_PlayerParty_get(fsys->savedata);
+    u8 length = GetPartyCount(party);
+    for (int i = 0; i < length; i++) {
+        POKEMON *mon = GetPartyMonByIndex(party, i);
+        u16 item = GetMonData(mon, MON_DATA_RESERVED_114, NULL);
+        if (item) {
+            item -= 1;
+            SetMonData(mon, MON_DATA_HELD_ITEM, &item);
+            u16 zero = 0;
+            SetMonData(mon, MON_DATA_RESERVED_114, &zero);
+        }
     }
 }
 
@@ -262,6 +285,7 @@ void sub_02050AAC(TaskManager *man, BATTLE_SETUP *setup, int effect, int bgm, in
 }
 
 static WILD_ENCOUNTER *WildEncounter_New(BATTLE_SETUP *setup, int effect, int bgm, int *winFlag) {
+    init_battle(setup);
     WILD_ENCOUNTER *encounter = AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(WILD_ENCOUNTER));
     encounter->winFlag = winFlag;
     if (winFlag != NULL) {
