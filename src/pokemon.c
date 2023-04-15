@@ -190,7 +190,10 @@ void CreateBoxMon(BOXMON * boxPokemon, int species, int level, int fixedIV, int 
     u32 iv;
     ZeroBoxMonData(boxPokemon);
     decry = AcquireBoxMonLock(boxPokemon);
-    BOOL modified = modify_pokemon(boxPokemon, species);
+    BOOL modified = FALSE;
+    if (otIdType != OT_ID_RANDOM_NO_SHINY) {
+        modified = modify_pokemon(boxPokemon, species);
+    }
     if (!modified) {
         if (hasFixedPersonality == 0) {
             fixedPersonality = (LCRandom() | (LCRandom() << 16));
