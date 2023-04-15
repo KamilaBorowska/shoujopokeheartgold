@@ -743,7 +743,7 @@ BOOL ScrCmd_GetPartySlotWithFatefulEncounter(SCRIPTCONTEXT *ctx) {
     for (i = 0, *slot = 255; i < partyCount; i++) {
         POKEMON *pokemon = GetPartyMonByIndex(SavArray_PlayerParty_get(fsys->savedata), i);
         if (!GetMonData(pokemon, MON_DATA_IS_EGG, NULL)) {
-            if ((u16)GetMonData(pokemon, MON_DATA_SPECIES, NULL) == species && GetMonData(pokemon, MON_DATA_FATEFUL_ENCOUNTER, NULL) == TRUE) {
+            if ((u16)GetMonData(pokemon, MON_DATA_SPECIES, NULL) == species) {
                 *slot = i;
                 break;
             }

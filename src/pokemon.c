@@ -3571,10 +3571,9 @@ BOOL Mon_CanUseGracidea(POKEMON *pokemon) {
     int forme = GetMonData(pokemon, MON_DATA_FORME, NULL);
     int status = GetMonData(pokemon, MON_DATA_STATUS, NULL);
     int hp = GetMonData(pokemon, MON_DATA_HP, NULL);
-    BOOL fatefulEncounter = GetMonData(pokemon, MON_DATA_FATEFUL_ENCOUNTER, NULL);
     GF_RTC_CopyTime(&time);
 
-    if (species == SPECIES_SHAYMIN && forme == SHAYMIN_LAND && hp != 0 && fatefulEncounter == TRUE && !(status & MON_STATUS_FRZ_MASK) && (time.hour >= 4 && time.hour < 20)) {
+    if (species == SPECIES_SHAYMIN && forme == SHAYMIN_LAND && hp != 0 && !(status & MON_STATUS_FRZ_MASK) && (time.hour >= 4 && time.hour < 20)) {
         return TRUE;
     } else {
         return FALSE;
